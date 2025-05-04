@@ -66,6 +66,26 @@ def register_order(request):
     data = request.data
     print('!!!!! Заказ через DRF:', data)
 
+    products = data.get('products', None)
+
+    if products is None:
+        return Response(
+            {"products": "Обязательное поле."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if not isinstance(products, list):
+        return Response(
+            {"products": "Ожидался list со значениями, но был получен другой тип."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if len(products) == 0:
+        return Response(
+            {"products": "Этот список не может быть пустым."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     order = Order.objects.create(
         firstname=data['firstname'],
         lastname=data.get('lastname', ''),
@@ -73,7 +93,7 @@ def register_order(request):
         address=data['address']
     )
 
-    for item in data['products']:
+    for item in products:
         product = Product.objects.get(pk=item['product'])
         OrderItem.objects.create(
             order=order,
