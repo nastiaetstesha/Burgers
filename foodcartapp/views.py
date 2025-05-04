@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Order, OrderItem, Product
+from .serializers import OrderSerializer
 
 
 def banners_list_api(request):
@@ -63,43 +64,9 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    data = request.data
-    print('!!!!! Заказ через DRF:', data)
-
-    products = data.get('products', None)
-
-    if products is None:
-        return Response(
-            {"products": "Обязательное поле."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    if not isinstance(products, list):
-        return Response(
-            {"products": "Ожидался list со значениями, но был получен другой тип."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    if len(products) == 0:
-        return Response(
-            {"products": "Этот список не может быть пустым."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    order = Order.objects.create(
-        firstname=data['firstname'],
-        lastname=data.get('lastname', ''),
-        phonenumber=data['phonenumber'],
-        address=data['address']
-    )
-
-    for item in products:
-        product = Product.objects.get(pk=item['product'])
-        OrderItem.objects.create(
-            order=order,
-            product=product,
-            quantity=item['quantity'],
-            price=product.price
-        )
-
-    return Response({'status': 'ok'}, status=status.HTTP_201_CREATED)
+    serializer = OrderSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'status': 'ok'}, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
