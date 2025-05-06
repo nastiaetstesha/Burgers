@@ -158,7 +158,26 @@ class Order(models.Model):
         default='unprocessed',
         db_index=True
     )
-    comment = models.TextField('Комментарий', blank=True)
+    comment = models.TextField('Комментарий', blank=True, null=True)
+    created_at = models.DateTimeField(
+        'Время создания',
+        auto_now_add=True,
+        db_index=True,
+    )
+
+    called_at = models.DateTimeField(
+        'Время звонка клиенту',
+        blank=True,
+        null=True,
+        db_index=True,
+    )
+
+    delivered_at = models.DateTimeField(
+        'Время доставки',
+        blank=True,
+        null=True,
+        db_index=True,
+    )
 
     class Meta:
         verbose_name = 'заказ'

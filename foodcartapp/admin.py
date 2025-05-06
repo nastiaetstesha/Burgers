@@ -119,14 +119,15 @@ class OrderItemInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'firstname', 'lastname', 'phonenumber', 'created_at']
     inlines = [OrderItemInline]
-
+    readonly_fields = ('created_at',)
+    
     def response_change(self, request, obj):
         next_url = request.GET.get('next')
 
         if next_url and url_has_allowed_host_and_scheme(
             next_url, allowed_hosts={request.get_host()}
             ):
-            
+
             return redirect(next_url)
 
         return super().response_change(request, obj)
