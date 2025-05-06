@@ -94,10 +94,13 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    orders = (Order.objects
-              .with_total_price()
-              .prefetch_related('items__product')
-              .order_by('id'))
+    orders = (
+        Order.objects
+        .exclude(status='completed')
+        .with_total_price()
+        .prefetch_related('items__product')
+        .order_by('id')
+    )
 
     return render(request, 'order_items.html', {
         'order_items': orders
