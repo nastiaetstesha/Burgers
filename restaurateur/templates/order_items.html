@@ -19,6 +19,7 @@
       <th>Телефон</th>
       <th>Адрес доставки</th>
       <th>Сумма заказа</th>
+      <th>Комментарий</th>
       <th>Ссылка на админку</th>
     </tr>
 
@@ -30,6 +31,7 @@
       <td>{{ order.phonenumber }}</td>
       <td>{{ order.address }}</td>
       <td>{{ order.total_price }} ₽</td>
+      <td>{{ order.comment|default_if_none:'' }}</td>
       <td>
         <a href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{ request.path }}">Редактировать</a>
       </td>
