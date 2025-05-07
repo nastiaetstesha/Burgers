@@ -11,35 +11,49 @@
   <br/>
   <br/>
   <div class="container">
-   <table class="table table-responsive">
-    <tr>
-      <th>ID заказа</th>
-      <th>Статус</th>
-      <th>Способ оплаты</th>
-      <th>Клиент</th>
-      <th>Телефон</th>
-      <th>Адрес доставки</th>
-      <th>Сумма заказа</th>
-      <th>Комментарий</th>
-      <th>Ссылка на админку</th>
-    </tr>
+    <table class="table table-responsive">
+      <tr>
+        <th>ID заказа</th>
+        <th>Статус</th>
+        <th>Способ оплаты</th>
+        <th>Клиент</th>
+        <th>Телефон</th>
+        <th>Адрес доставки</th>
+        <th>Сумма заказа</th>
+        <th>Комментарий</th>
+        <th>Ссылка на админку</th>
+        <th>Рестораны</th>
+      </tr>
 
-    {% for order in order_items %}
-    <tr>
-      <td>{{ order.id }}</td>
-      <td>{{ order.get_status_display }}</td>
-      <td>{{ order.get_payment_display }}</td>
-      <td>{{ order.firstname }} {{ order.lastname }}</td>
-      <td>{{ order.phonenumber }}</td>
-      <td>{{ order.address }}</td>
-      <td>{{ order.total_price }} ₽</td>
-      <td>{{ order.comment|default_if_none:'' }}</td>
-      <td>
-        <a href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{ request.path }}">Редактировать</a>
-      </td>
-    </tr>
-    {% endfor %}
-
-   </table>
+      {% for order, restaurants in orders_with_restaurants %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.get_status_display }}</td>
+        <td>{{ order.get_payment_display }}</td>
+        <td>{{ order.firstname }} {{ order.lastname }}</td>
+        <td>{{ order.phonenumber }}</td>
+        <td>{{ order.address }}</td>
+        <td>{{ order.total_price }} ₽</td>
+        <td>{{ order.comment|default_if_none:'' }}</td>
+        <td>
+          <a href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{ request.path }}">Редактировать</a>
+        </td>
+        <td>
+          {% if order.cooking_restaurant %}
+            Готовит {{ order.cooking_restaurant.name }}
+          {% elif restaurants %}
+            Может быть приготовлен ресторанами:
+            <ul>
+              {% for restaurant in restaurants %}
+                <li>{{ restaurant.name }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            Ошибка определения координат
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
   </div>
 {% endblock %}
