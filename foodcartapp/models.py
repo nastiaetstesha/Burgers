@@ -140,6 +140,7 @@ class Order(models.Model):
     STATUS_CHOICES = [
         ('unprocessed', 'Необработанный'),
         ('confirmed', 'Подтверждённый'),
+        ('cooking', 'Готовится'),
         ('assembled', 'Собран'),
         ('delivering', 'В доставке'),
         ('completed', 'Завершён'),
