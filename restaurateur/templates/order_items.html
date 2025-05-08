@@ -25,7 +25,7 @@
         <th>Рестораны</th>
       </tr>
 
-      {% for order, restaurants in orders_with_restaurants %}
+      {% for order, restaurants_with_distances, error in orders_with_restaurants %}
       <tr>
         <td>{{ order.id }}</td>
         <td>{{ order.get_status_display }}</td>
@@ -41,17 +41,19 @@
         <td>
           {% if order.cooking_restaurant %}
             Готовит {{ order.cooking_restaurant.name }}
-          {% elif restaurants %}
+          {% elif error %}
+            {{ error }}
+          {% elif restaurants_with_distances %}
             Может быть приготовлен ресторанами:
             <ul>
-              {% for restaurant in restaurants %}
-                <li>{{ restaurant.name }}</li>
+              {% for restaurant, dist in restaurants_with_distances %}
+                <li>{{ restaurant.name }} — {{ dist }} км</li>
               {% endfor %}
             </ul>
           {% else %}
-            Ошибка определения координат
+            Нет подходящих ресторанов
           {% endif %}
-        </td>
+        </td>        
       </tr>
       {% endfor %}
     </table>

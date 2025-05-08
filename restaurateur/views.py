@@ -12,6 +12,7 @@ from django.db import transaction
 from foodcartapp.models import Product, Restaurant
 from foodcartapp.models import Order
 from foodcartapp.utils import get_available_restaurants
+from foodcartapp.utils import get_restaurants_with_distances
 
 
 class Login(forms.Form):
@@ -110,11 +111,17 @@ def view_orders(request):
     # for order in orders:
     #     possible_restaurants = get_available_restaurants(order)
     #     orders_with_restaurants.append((order, possible_restaurants))
+    # for order in orders:
+    #     possible_restaurants = get_available_restaurants(order)
+    #     print(f'Order #{order.id}:', possible_restaurants)  # ← проверка
+    #     orders_with_restaurants.append((order, possible_restaurants))
     for order in orders:
-        possible_restaurants = get_available_restaurants(order)
-        print(f'Order #{order.id}:', possible_restaurants)  # ← проверка
-        orders_with_restaurants.append((order, possible_restaurants))
-
+        restaurants_with_distances, error = get_restaurants_with_distances(
+            order
+            )
+        orders_with_restaurants.append(
+            (order, restaurants_with_distances, error)
+            )
     return render(request, 'order_items.html', {
         'orders_with_restaurants': orders_with_restaurants
     })

@@ -1,4 +1,12 @@
 from foodcartapp.models import RestaurantMenuItem
+import requests
+from django.conf import settings
+from geopy.distance import distance as geopy_distance
+from .models import RestaurantMenuItem, Restaurant
+from collections import defaultdict
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_available_restaurants(order):
@@ -20,3 +28,55 @@ def get_available_restaurants(order):
             common_restaurants &= restaurants
 
     return common_restaurants or set()
+
+
+def fetch_coordinates(apikey, address):
+    base_url = "https://geocode-maps.yandex.ru/1.x"
+    response = requests.get(base_url, params={
+        "geocode": address,
+        "apikey": apikey,
+        "format": "json",
+    })
+    response.raise_for_status()
+    found_places = response.json()['response']['GeoObjectCollection']['featureMember']
+
+    if not found_places:
+        return None
+
+    most_relevant = found_places[0]
+    lon, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
+    return float(lat), float(lon)
+
+
+def get_restaurants_with_distances(order):
+    try:
+        order_coords = fetch_coordinates(
+            settings.YANDEX_API_TOKEN,
+            order.address
+        )
+    except requests.exceptions.RequestException:
+        logger.error(f'Ошибка при запросе координат для адреса "{order.address}"')
+        return None, 'Ошибка при запросе координат доставки'
+
+    if not order_coords:
+        logger.warning(f'Координаты не найдены для адреса: {order.address}')
+        return None, 'Координаты доставки не найдены'
+
+    suitable_restaurants = get_available_restaurants(order)
+
+    restaurant_with_distances = []
+    for restaurant in suitable_restaurants:
+        try:
+            coords = fetch_coordinates(
+                settings.YANDEX_API_TOKEN, restaurant.address
+                )
+        except requests.exceptions.RequestException:
+            continue
+        if not coords:
+            continue
+
+        dist = round(geopy_distance(order_coords, coords).km, 2)
+        restaurant_with_distances.append((restaurant, dist))
+
+    restaurant_with_distances.sort(key=lambda item: item[1])
+    return restaurant_with_distances, None
