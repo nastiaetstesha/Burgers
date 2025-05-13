@@ -164,7 +164,7 @@ class Order(models.Model):
         default='unprocessed',
         db_index=True
     )
-    comment = models.TextField('Комментарий', blank=True, null=True)
+    comment = models.TextField('Комментарий', blank=True)
     created_at = models.DateTimeField(
         'Время создания',
         auto_now_add=True,
