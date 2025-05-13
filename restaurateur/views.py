@@ -104,17 +104,8 @@ def view_orders(request):
         .order_by('id')
     )
 
-    # return render(request, 'order_items.html', {
-    #     'order_items': orders
-    # })
     orders_with_restaurants = []
-    # for order in orders:
-    #     possible_restaurants = get_available_restaurants(order)
-    #     orders_with_restaurants.append((order, possible_restaurants))
-    # for order in orders:
-    #     possible_restaurants = get_available_restaurants(order)
-    #     print(f'Order #{order.id}:', possible_restaurants)  # ← проверка
-    #     orders_with_restaurants.append((order, possible_restaurants))
+
     for order in orders:
         restaurants_with_distances, error = get_restaurants_with_distances(
             order
