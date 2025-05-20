@@ -116,3 +116,7 @@ def view_orders(request):
     return render(request, 'order_items.html', {
         'orders_with_restaurants': orders_with_restaurants
     })
+
+
+def test_error(request):
+    1 / 0
