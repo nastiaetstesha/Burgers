@@ -118,5 +118,5 @@ def view_orders(request):
     })
 
 
-def test_error(request):
-    1 / 0
+# def test_error(request):
+#     1 / 0
