@@ -1,3 +1,6 @@
+set -a
+source .env
+set +a
 set -e
 
 echo " Переход в папку проекта"
@@ -28,3 +31,13 @@ echo "Перезапуск Gunicorn (star-burger)"
 sudo systemctl restart star-burger.service
 
 echo " Готово! Код обновлён и сервер перезапущен."
+echo "📤 Отправка информации о деплое в Rollbar"
+REVISION=$(git rev-parse HEAD)
+curl -X POST https://api.rollbar.com/api/1/deploy/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "access_token": "'"$ROLLBAR_TOKEN"'",
+    "environment": "production",
+    "revision": "'"$REVISION"'",
+    "local_username": "'"$(whoami)"'"
+  }'
