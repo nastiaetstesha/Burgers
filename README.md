@@ -181,6 +181,13 @@ Parcel будет следить за файлами в каталоге `bundle
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 
 # Сервер 
+
+- IP: `185.235.128.221`
+- Пользователь: `root`
+- Порт SSH: `22`
+- Скрипт деплоя: `/opt/burgers/deploy_star_burger.sh`
+- Сайт: https://nastiaetstesha.dpdns.org/
+
 ### Быстрый деплой на сервере
 `./deploy_star_burger.sh`
 #### Скрипт автоматически:
@@ -196,6 +203,7 @@ Parcel будет следить за файлами в каталоге `bundle
 ### Проверка, что таймер работает
 
 `systemctl list-timers | grep certbot`
+
 ## Цели проекта
 
 Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org). За основу был взят код проекта [FoodCart](https://github.com/Saibharath79/FoodCart).
