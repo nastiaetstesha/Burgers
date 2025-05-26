@@ -5,8 +5,6 @@ from environs import Env
 import rollbar
 from rollbar.contrib.django.middleware import RollbarNotifierMiddleware
 
-# os.environ['PATH'] += os.pathsep + os.getcwd()
-# print(os.environ['PATH'])
 
 env = Env()
 env.read_env()
@@ -132,10 +130,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "bundles"),
 ]
 # ATOMIC_REQUESTS = True
+ROLLBAR_TOKEN = env('ROLLBAR_TOKEN', default='')
 
-ROLLBAR = {
-    'access_token': env('ROLLBAR_TOKEN'),
-    'environment': env('ROLLBAR_ENV', 'development'),
-    'code_version': '1.0',
-    'root': BASE_DIR,
-}
+if ROLLBAR_TOKEN:
+    ROLLBAR = {
+        'access_token': ROLLBAR_TOKEN,
+        'environment': env('ROLLBAR_ENV', default='development'),
+        'code_version': os.getenv('GIT_COMMIT', '1.0'),
+        'root': BASE_DIR,
+    }

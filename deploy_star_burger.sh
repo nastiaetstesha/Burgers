@@ -32,7 +32,10 @@ sudo systemctl restart star-burger.service
 
 echo " Готово! Код обновлён и сервер перезапущен."
 echo "📤 Отправка информации о деплое в Rollbar"
+
 REVISION=$(git rev-parse HEAD)
+export GIT_COMMIT=$(git rev-parse HEAD)
+
 curl -X POST https://api.rollbar.com/api/1/deploy/ \
   -H "Content-Type: application/json" \
   -d '{
