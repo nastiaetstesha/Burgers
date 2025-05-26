@@ -41,6 +41,6 @@ curl -X POST https://api.rollbar.com/api/1/deploy/ \
   -d '{
     "access_token": "'"$ROLLBAR_TOKEN"'",
     "environment": "production",
-    "revision": "'"$REVISION"'",
+    "revision": "'"$GIT_COMMIT"'",
     "local_username": "'"$(whoami)"'"
   }'
