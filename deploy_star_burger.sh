@@ -35,12 +35,15 @@ echo "📤 Отправка информации о деплое в Rollbar"
 
 REVISION=$(git rev-parse HEAD)
 export GIT_COMMIT=$(git rev-parse HEAD)
-
+echo $GIT_COMMIT
 curl -X POST https://api.rollbar.com/api/1/deploy/ \
   -H "Content-Type: application/json" \
-  -d '{
-    "access_token": "'"$ROLLBAR_TOKEN"'",
-    "environment": "production",
-    "revision": "'"$GIT_COMMIT"'",
-    "local_username": "'"$(whoami)"'"
-  }'
+  -d "{
+    \"access_token\": \"$ROLLBAR_TOKEN\",
+    \"environment\": \"production\",
+    \"revision\": \"$GIT_COMMIT\",
+    \"local_username\": \"$(whoami)\",
+    \"repository\": \"https://github.com/nastiaetstesha/Burgers.git\",
+    \"branch\": \"main\"
+  }"
+
