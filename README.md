@@ -224,7 +224,9 @@ docker compose run backend python manage.py collectstatic --noinput
 docker compose up
 ```
 -- Сайт доступен по ссылке http://localhost:8000
-###
+### Проверить логи:
+
+`docker compose logs -f`
 
 ###
 ###

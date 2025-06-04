@@ -2,7 +2,7 @@ version: '3.12'
 
 services:
   backend:
-    build: .
+    image: nastiaetstesha/star_burgers:backend
     volumes:
       - ./assets:/app/assets
       - ./bundles:/app/bundles 
@@ -15,9 +15,7 @@ services:
       - .env
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
+    image: nastiaetstesha/star_burgers:frontend
     volumes:
       - ./bundles:/app/bundles
 
