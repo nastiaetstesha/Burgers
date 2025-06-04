@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# macOS
+.DS_Store
+
+# Node / JS
+node_modules/
+.parcel-cache/
+bundles/
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Virtualenv
+venv/
+ENV/
+.env
+
+# Git
+.git
+.gitignore
+
+# System
+*.log
+*.swp
+*.bak
+
+# Docker
+Dockerfile*
+docker-compose.yaml
+
+# Archive
+*.zip
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.sqlite3
+*.env
+venv/
+node_modules/
