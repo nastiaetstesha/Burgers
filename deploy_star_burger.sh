@@ -3,39 +3,41 @@ source .env
 set +a
 set -e
 
-echo " Переход в папку проекта"
+echo "Переход в папку проекта"
 cd /opt/burgers
 
-echo "Получение свежего кода"
-git pull
+echo "Получение свежего кода из ветки server"
+git pull origin server
 
-echo "Активация виртуального окружения"
-source .venv/bin/activate
+echo "Получение свежих образов с Docker Hub (обновляем всегда)"
+docker compose pull --quiet --ignore-pull-failures
 
-echo "Установка зависимостей"
-pip install -r requirements.txt
+# Альтернативно — если гарантировать обновление при запуске up:
+# docker compose up --pull always -d
 
-echo "Установка Node.js-зависимостей"
-npm ci
-
-echo "Сборка фронтенда"
-npm run build
-
-echo "Сборка статики Django"
-python manage.py collectstatic --noinput
+echo "Остановка и удаление старых контейнеров"
+docker compose down --remove-orphans
 
 echo "Применение миграций"
-python manage.py migrate
+docker compose run --rm backend python manage.py migrate
 
-echo "Перезапуск Gunicorn (star-burger)"
-sudo systemctl restart star-burger.service
+echo "Сборка статики Django"
+docker compose run --rm backend python manage.py collectstatic --noinput
 
-echo " Готово! Код обновлён и сервер перезапущен."
+echo "Запуск контейнеров в фоне"
+docker compose up -d --pull always
+
+echo "Очистка неиспользуемых Docker-образов"
+docker image prune -f
+
+echo "Готово! Контейнеры перезапущены."
+
 echo "📤 Отправка информации о деплое в Rollbar"
 
 REVISION=$(git rev-parse HEAD)
-export GIT_COMMIT=$(git rev-parse HEAD)
+export GIT_COMMIT=$REVISION
 echo $GIT_COMMIT
+
 curl -X POST https://api.rollbar.com/api/1/deploy/ \
   -H "Content-Type: application/json" \
   -d "{
@@ -44,6 +46,5 @@ curl -X POST https://api.rollbar.com/api/1/deploy/ \
     \"revision\": \"$GIT_COMMIT\",
     \"local_username\": \"$(whoami)\",
     \"repository\": \"https://github.com/nastiaetstesha/Burgers.git\",
-    \"branch\": \"main\"
+    \"branch\": \"server\"
   }"
-
