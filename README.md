@@ -230,6 +230,8 @@ docker compose up
 `docker compose logs -f`
 
 ### Если запускать на сервере
+- Скрипт деплоя: `/opt/burgers/deploy_star_burger.sh`
+- Сайт: https://nastiaetstesha.dpdns.org/
 
 ### Как убедиться что сайт работает
 ```
