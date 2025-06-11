@@ -7,30 +7,28 @@ echo " Переход в папку проекта"
 cd /opt/burgers
 
 echo "Получение свежего кода"
-git pull
+git pull origin server
 
-echo "Активация виртуального окружения"
-source .venv/bin/activate
+echo "Получение свежих образов с Docker Hub"
+docker compose pull --quiet
 
-echo "Установка зависимостей"
-pip install -r requirements.txt
+echo "Остановка старых контейнеров и удаление мусорных"
+docker compose down --remove-orphans
 
-echo "Установка Node.js-зависимостей"
-npm ci
-
-echo "Сборка фронтенда"
-npm run build
-
-echo "Сборка статики Django"
-python manage.py collectstatic --noinput
+echo "Очистка неиспользуемых образов"
+docker image prune -f
 
 echo "Применение миграций"
-python manage.py migrate
+docker compose run --rm backend python manage.py migrate
 
-echo "Перезапуск Gunicorn (star-burger)"
-sudo systemctl restart star-burger.service
+echo "Сборка статики Django"
+docker compose run --rm backend python manage.py collectstatic --noinput
 
-echo " Готово! Код обновлён и сервер перезапущен."
+echo "Запуск контейнеров в фоне"
+docker compose up -d --pull always
+
+echo "Готово! Контейнеры перезапущены."
+
 echo "📤 Отправка информации о деплое в Rollbar"
 
 REVISION=$(git rev-parse HEAD)
@@ -44,6 +42,6 @@ curl -X POST https://api.rollbar.com/api/1/deploy/ \
     \"revision\": \"$GIT_COMMIT\",
     \"local_username\": \"$(whoami)\",
     \"repository\": \"https://github.com/nastiaetstesha/Burgers.git\",
-    \"branch\": \"main\"
+    \"branch\": \"server\"
   }"
 

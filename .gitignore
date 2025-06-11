@@ -146,3 +146,4 @@ staticfiles/
 media/
 node_modules/
 data.json
+burgers_dump.sql
