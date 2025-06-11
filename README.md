@@ -204,6 +204,7 @@ Parcel будет следить за файлами в каталоге `bundle
 
 `systemctl list-timers | grep certbot`
 
+# Docker
 ## 🛠 Как перезапускается docker контейнер:
 ```
 docker compose down         # останавливает
@@ -228,5 +229,13 @@ docker compose up
 
 `docker compose logs -f`
 
-###
+### Если запускать на сервере
+- Скрипт деплоя: `/opt/burgers/deploy_star_burger.sh`
+- Сайт: https://nastiaetstesha.dpdns.org/
+
+### Как убедиться что сайт работает
+```
+docker compose ps    # посмотреть работающие контейнеры
+docker compose logs nginx  # посмотреть логи nginx
+```
 ###
