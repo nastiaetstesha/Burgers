@@ -6,10 +6,10 @@ set -e
 echo "Переход в папку проекта"
 cd /opt/burgers
 
-echo "Получение свежего кода из ветки server"
+echo "Получение свежего кода"
 git pull origin server
 
-echo "Получение свежих образов с Docker Hub (обновляем всегда)"
+echo "Получение свежих образов с Docker Hub"
 docker compose pull --quiet --ignore-pull-failures
 
 # Альтернативно — если гарантировать обновление при запуске up:
@@ -26,9 +26,6 @@ docker compose run --rm backend python manage.py collectstatic --noinput
 
 echo "Запуск контейнеров в фоне"
 docker compose up -d --pull always
-
-echo "Очистка неиспользуемых Docker-образов"
-docker image prune -f
 
 echo "Готово! Контейнеры перезапущены."
 
